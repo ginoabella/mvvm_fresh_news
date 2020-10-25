@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fresh_news/pages/news_list.dart';
-import 'package:fresh_news/services/error_service.dart';
+import 'package:fresh_news/pages/news_list_page.dart';
 import 'package:fresh_news/viewmodels/news_article_list_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -11,18 +10,17 @@ void main() {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final NewsArticleListViewModel newsArticleList = NewsArticleListViewModel();
+    newsArticleList.populateTopHeadlines();
     return MaterialApp(
       title: 'Fresh News',
       home: MultiProvider(
         providers: [
           ChangeNotifierProvider(
-            create: (context) => NewsArticleListViewModel(),
-          ),
-          Provider(
-            create: (context) => ErrorService(),
+            create: (context) => newsArticleList,
           ),
         ],
-        child: NewsList(),
+        child: NewsListPage(),
       ),
     );
   }

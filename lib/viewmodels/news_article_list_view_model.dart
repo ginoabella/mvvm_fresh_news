@@ -4,25 +4,47 @@ import 'package:fresh_news/services/error_service.dart';
 import 'package:fresh_news/services/web_service.dart';
 import 'package:fresh_news/viewmodels/news_article_view_model.dart';
 
+enum LoadingStatus { completed, searching, empty }
+
 class NewsArticleListViewModel extends ChangeNotifier {
-  //bool _error = ErrorService.getError(reset: true);
+  LoadingStatus status = LoadingStatus.searching;
+
   List<NewsArticleViewModel> articles = List<NewsArticleViewModel>();
 
-  NewsArticleListViewModel() {
-    _populateTopHeadlines();
-  }
+  Future<void> search(String keyword) async {
+    this.status = LoadingStatus.searching;
+    notifyListeners();
 
-  Future<void> _populateTopHeadlines() async {
     List<NewsArticle> newsArticles = await WebService()
-        .fetchTopHeadlines()
+        .fetchHeadlinesByKeyword(keyword)
         .catchError((_) => ErrorService.setError());
-    // ignore: todo
-    // TODO: Create error handler and place in provider so that its accessible to the UI.
+
     if (!ErrorService.getError()) {
       this.articles = newsArticles
           .map((article) => NewsArticleViewModel(article: article))
           .toList();
 
+      this.status =
+          this.articles.isEmpty ? LoadingStatus.empty : LoadingStatus.completed;
+      notifyListeners();
+    }
+  }
+
+  Future<void> populateTopHeadlines() async {
+    this.status = LoadingStatus.searching;
+    notifyListeners();
+
+    List<NewsArticle> newsArticles = await WebService()
+        .fetchTopHeadlines()
+        .catchError((_) => ErrorService.setError());
+
+    if (!ErrorService.getError()) {
+      this.articles = newsArticles
+          .map((article) => NewsArticleViewModel(article: article))
+          .toList();
+
+      this.status =
+          this.articles.isEmpty ? LoadingStatus.empty : LoadingStatus.completed;
       notifyListeners();
     }
   }
