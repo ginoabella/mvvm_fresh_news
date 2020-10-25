@@ -10,40 +10,42 @@ class NewsListPage extends StatelessWidget {
   Widget _buildList(NewsArticleListViewModel vm) {
     switch (vm.status) {
       case LoadingStatus.searching:
-        return Align(child: CircularProgressIndicator());
+        return const Align(child: CircularProgressIndicator());
 
       case LoadingStatus.empty:
-        return Align(child: Text('No Result Found'));
+        return const Align(child: Text('No Result Found'));
 
       case LoadingStatus.completed:
         return Expanded(
           child: NewsList(articles: vm.articles),
         );
     }
-    return Text('Not supposed to reach this'); // just so no errors to display
+    return const Text(
+        'Not supposed to reach this'); // just so no errors to display
   }
 
+  @override
   Widget build(BuildContext context) {
     final NewsArticleListViewModel vm =
         Provider.of<NewsArticleListViewModel>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Top News'),
+        title: const Text('Top News'),
       ),
       body: ErrorService.getError()
-          ? Center(child: Text('Error'))
+          ? const Center(child: Text('Error'))
           : Column(
               children: [
                 TextField(
                   controller: _controller,
                   decoration: InputDecoration(
                     labelText: 'Enter Search',
-                    icon: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    icon: const Padding(
+                      padding: EdgeInsets.all(8.0),
                       child: Icon(Icons.search),
                     ),
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.clear),
+                      icon: const Icon(Icons.clear),
                       onPressed: () {
                         vm.populateTopHeadlines();
                         _controller.clear();

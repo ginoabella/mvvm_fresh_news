@@ -50,8 +50,11 @@ class WebService {
       final response = await client.get(Constants.headlinesFor(keyword));
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
-        final Iterable list = result['articles'];
-        return list.map((article) => NewsArticle.fromJSON(article)).toList();
+        final Iterable list = result['articles'] as List;
+        return list
+            .map((article) =>
+                NewsArticle.fromJSON(article as Map<String, dynamic>))
+            .toList();
       } else {
         throw Exception('Failed to get queried headlines');
       }
@@ -65,8 +68,11 @@ class WebService {
       final response = await client.get(Constants.TOP_HEADLINES_URL);
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
-        final Iterable list = result['articles'];
-        return list.map((article) => NewsArticle.fromJSON(article)).toList();
+        final Iterable list = result['articles'] as List;
+        return list
+            .map((article) =>
+                NewsArticle.fromJSON(article as Map<String, dynamic>))
+            .toList();
       } else {
         throw Exception('Failed to get top headlines');
       }

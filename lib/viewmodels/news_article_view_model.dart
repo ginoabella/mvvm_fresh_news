@@ -1,7 +1,7 @@
 import 'package:fresh_news/models/news_article.dart';
 
 class NewsArticleViewModel {
-  NewsArticle _newsArticle;
+  final NewsArticle _newsArticle;
 
   NewsArticleViewModel({NewsArticle article}) : _newsArticle = article;
 

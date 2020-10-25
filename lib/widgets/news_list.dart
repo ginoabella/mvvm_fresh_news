@@ -16,7 +16,7 @@ class NewsList extends StatelessWidget {
       itemBuilder: (context, index) {
         final article = articles[index];
         return ListTile(
-          leading: Container(
+          leading: SizedBox(
             width: 100,
             height: 100,
             child: article.urlToImage == null

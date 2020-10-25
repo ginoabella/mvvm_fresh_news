@@ -1,10 +1,14 @@
 include: package:lint/analysis_options.yaml
 
 analyzer:
+  exclude: 
+  #  lib/services/web_services.dart
+  #   - lib/models/news_article.dart
   errors:
     missing_return: error
     missing_required_param: error
     must_be_immutable: error
     sort_unnamed_constructors_first: ignore
     non_constant_identifier_names: ignore
+  #  invalid_assignment: ignore
     
