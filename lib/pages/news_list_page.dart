@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fresh_news/services/error_service.dart';
 import 'package:fresh_news/viewmodels/news_article_list_view_model.dart';
 import 'package:fresh_news/widgets/news_list.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +9,7 @@ class NewsListPage extends StatelessWidget {
   Widget _buildList(NewsArticleListViewModel vm) {
     switch (vm.status) {
       case LoadingStatus.searching:
-        return const Align(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
 
       case LoadingStatus.empty:
         return const Align(child: Text('No Result Found'));
@@ -19,9 +18,10 @@ class NewsListPage extends StatelessWidget {
         return Expanded(
           child: NewsList(articles: vm.articles),
         );
+      case LoadingStatus.error:
+        return Align(child: Text(vm.errorDescription));
     }
-    return const Text(
-        'Not supposed to reach this'); // just so no errors to display
+    return const Text('Error......'); // should not go this point
   }
 
   @override
@@ -32,36 +32,34 @@ class NewsListPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Top News'),
       ),
-      body: ErrorService.getError()
-          ? const Center(child: Text('Error'))
-          : Column(
-              children: [
-                TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    labelText: 'Enter Search',
-                    icon: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(Icons.search),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        vm.populateTopHeadlines();
-                        _controller.clear();
-                      },
-                    ),
-                  ),
-                  onSubmitted: (value) {
-                    // fetch all news related to the keyword
-                    if (value.isNotEmpty) {
-                      vm.search(value);
-                    }
-                  },
-                ),
-                _buildList(vm),
-              ],
+      body: Column(
+        children: [
+          TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              labelText: 'Enter Search',
+              icon: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(Icons.search),
+              ),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  vm.populateTopHeadlines();
+                  _controller.clear();
+                },
+              ),
             ),
+            onSubmitted: (value) {
+              // fetch all news related to the keyword
+              if (value.isNotEmpty) {
+                vm.search(value);
+              }
+            },
+          ),
+          _buildList(vm),
+        ],
+      ),
     );
   }
 }

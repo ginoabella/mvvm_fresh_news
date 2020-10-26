@@ -10,5 +10,5 @@ analyzer:
     must_be_immutable: error
     sort_unnamed_constructors_first: ignore
     non_constant_identifier_names: ignore
-  #  invalid_assignment: ignore
+    avoid_classes_with_only_static_members: ignore
     

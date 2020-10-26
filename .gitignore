@@ -30,7 +30,7 @@
 .pub-cache/
 .pub/
 /build/
-**/constanKey.dart
+**/constan_key.dart
 
 
 # Web related

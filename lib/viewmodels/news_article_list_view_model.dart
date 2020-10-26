@@ -4,7 +4,7 @@ import 'package:fresh_news/services/error_service.dart';
 import 'package:fresh_news/services/web_service.dart';
 import 'package:fresh_news/viewmodels/news_article_view_model.dart';
 
-enum LoadingStatus { completed, searching, empty }
+enum LoadingStatus { completed, searching, empty, error }
 
 class NewsArticleListViewModel extends ChangeNotifier {
   LoadingStatus status = LoadingStatus.searching;
@@ -17,16 +17,19 @@ class NewsArticleListViewModel extends ChangeNotifier {
 
     final List<NewsArticle> newsArticles = await WebService()
         .fetchHeadlinesByKeyword(keyword)
-        .catchError((_) => ErrorService.setError());
+        .catchError((_) =>
+            ErrorService.setError(description: 'Failed retrieving Data'));
 
-    if (!ErrorService.getError()) {
+    if (ErrorService.getError(reset: true)) {
+      status = LoadingStatus.error;
+    } else {
       articles = newsArticles
           .map((article) => NewsArticleViewModel(article: article))
           .toList();
 
       status = articles.isEmpty ? LoadingStatus.empty : LoadingStatus.completed;
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   Future<void> populateTopHeadlines() async {
@@ -35,15 +38,20 @@ class NewsArticleListViewModel extends ChangeNotifier {
 
     final List<NewsArticle> newsArticles = await WebService()
         .fetchTopHeadlines()
-        .catchError((_) => ErrorService.setError());
+        .catchError((_) =>
+            ErrorService.setError(description: 'Failed retrieving Data'));
 
-    if (!ErrorService.getError()) {
+    if (ErrorService.getError(reset: true)) {
+      status = LoadingStatus.error;
+    } else {
       articles = newsArticles
           .map((article) => NewsArticleViewModel(article: article))
           .toList();
 
       status = articles.isEmpty ? LoadingStatus.empty : LoadingStatus.completed;
-      notifyListeners();
     }
+    notifyListeners();
   }
+
+  String get errorDescription => ErrorService.errorDescription;
 }
