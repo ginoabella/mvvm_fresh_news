@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:fresh_news/pages/news_article_details_page.dart';
 import 'package:fresh_news/viewmodels/news_article_list_view_model.dart';
+import 'package:fresh_news/viewmodels/news_article_view_model.dart';
 import 'package:fresh_news/widgets/news_list.dart';
 import 'package:provider/provider.dart';
 
 class NewsListPage extends StatelessWidget {
   final _controller = TextEditingController();
 
-  Widget _buildList(NewsArticleListViewModel vm) {
+  void _showNewsArticleDetails(
+      BuildContext context, NewsArticleViewModel article) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NewsArticleDetailsPage(article: article),
+      ),
+    );
+  }
+
+  Widget _buildList(BuildContext context, NewsArticleListViewModel vm) {
     switch (vm.status) {
       case LoadingStatus.searching:
         return const Center(child: CircularProgressIndicator());
@@ -16,7 +28,10 @@ class NewsListPage extends StatelessWidget {
 
       case LoadingStatus.completed:
         return Expanded(
-          child: NewsList(articles: vm.articles),
+          child: NewsList(
+            articles: vm.articles,
+            onSelected: (article) => _showNewsArticleDetails(context, article),
+          ),
         );
       case LoadingStatus.error:
         return Align(child: Text(vm.errorDescription));
@@ -31,6 +46,7 @@ class NewsListPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Top News'),
+        // TODO: Button to select countries
       ),
       body: Column(
         children: [
@@ -57,7 +73,7 @@ class NewsListPage extends StatelessWidget {
               }
             },
           ),
-          _buildList(vm),
+          _buildList(context, vm),
         ],
       ),
     );
